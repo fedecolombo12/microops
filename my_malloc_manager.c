@@ -69,7 +69,7 @@ void set_or_clear_bits(int set, Bitmap bitmap, uint16_t start_byte_index, uint16
 }
 
 // Implementación de la función create_new_chunk
-    void *create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChunkHeader *next) {
+void *create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChunkHeader *next) {
     // Calcula el total de unidades para mmap
     MemoryChunkHeader *new_chunk = NULL;
     uint16_t total_units_to_mmap = is_large_allocation ? units_needed + STRUCT_UNITS : UNITS_PER_CHUNK; 
@@ -84,25 +84,23 @@ void set_or_clear_bits(int set, Bitmap bitmap, uint16_t start_byte_index, uint16
 
 
     // Inicializa el header del chunk
-    new_chunk = (MemoryChunkHeader *)mem;
-    new_chunk->address = mem;
-    new_chunk->id = 0;
-    new_chunk->is_large_allocation = is_large_allocation;
-    new_chunk->chunk_total_units = total_units_to_mmap;
-    new_chunk->chunk_available_units = total_units_to_mmap - used_units;
-    new_chunk->bitmap = is_large_allocation ? NULL: (unsigned char *)mem + STRUCT_UNITS * UNIT_SIZE; // Establece en NULL por ahora
-    new_chunk->bitmap_size = is_large_allocation ? 8 : BITMAP_SIZE; // Establece en 0 por ahora
-    new_chunk->next = next;
-    
-    if(!is_large_allocation){
-        // Inicializa el bitmap
-        for (u_int16_t i = 0; i < used_units; i++) {
-            u_int16_t byte_index = i / 8;
-            u_int16_t bit_index = i % 8;
-            new_chunk->bitmap[byte_index]  |= (1 << (7 - bit_index));
-        }
+new_chunk = (MemoryChunkHeader *)mem;
+new_chunk->address = mem;
+new_chunk->id = 0;
+new_chunk->is_large_allocation = is_large_allocation;
+new_chunk->chunk_total_units = total_units_to_mmap;
+new_chunk->chunk_available_units = total_units_to_mmap - used_units;
+new_chunk->bitmap = is_large_allocation ? NULL: (unsigned char *)mem + STRUCT_UNITS * UNIT_SIZE; // Establece en NULL por ahora
+new_chunk->bitmap_size = is_large_allocation ? 8 : BITMAP_SIZE; // Establece en 0 por ahora
+new_chunk->next = next; 
+if(!is_large_allocation){
+    // Inicializa el bitmap
+    for (u_int16_t i = 0; i < used_units; i++) {
+        u_int16_t byte_index = i / 8;
+        u_int16_t bit_index = i % 8;
+        new_chunk->bitmap[byte_index]  |= (1 << (7 - bit_index));
     }
-
-    return new_chunk;
+}
+return new_chunk;
 }
 

@@ -1,6 +1,7 @@
 #include "my_malloc_manager.h"
+#include "my_memory_manager.c"
 
-// Funcion para obtener la entrada del usuario
+// Función para obtener la entrada del usuario
 int get_user_input(char *prompt, int *input) {
     printf("%s", prompt);
     if(scanf("%d", input) != 1) {
@@ -12,10 +13,8 @@ int get_user_input(char *prompt, int *input) {
 
 int main() {
     // Creamos e inicializamos el mapa de bits a cero
-    // unsigned char bitmap[BITMAP_SIZE] = {0};
-    //crear un chunk de 128 unidades
     MemoryChunkHeader* header = (MemoryChunkHeader*) create_new_chunk(UNITS_PER_CHUNK, 0, NULL);
-    for (int i = 0; i < BITMAP_SIZE; i++){
+    for (int i = 0; i < BITMAP_SIZE; i++) {
         header->bitmap[i] = 0;
     }
 
@@ -23,36 +22,56 @@ int main() {
 
     while (1) {
         int choice;
-        if (!get_user_input("Enter your choice (1 to set, 2 to clear or 0 to exit) ", &choice)) {
+        if (!get_user_input("Enter your choice (1 to set, 2 to clear, 3 to allocate, 4 to free, or 0 to exit): ", &choice)) {
             continue;
         }
-        // Si el usuario introduce 0, salimos del bucle y terminamos el programa
+
         if (choice == 0) {
             break;
         }
+
         int start_byte_index;
         int start_bit_index;
         int qty;
 
-        if (choice == 1){
+        if (choice == 1) {
             if (!get_user_input("Enter the number of bits to set: ", &qty) || 
                 !get_user_input("Enter in which byte start to set: ", &start_byte_index) || 
                 !get_user_input("Enter the position of the bit to start set: ", &start_bit_index)) {
                 continue;
             }
-            // first_fit(header->bitmap, header->bitmap_size, qty);
             set_or_clear_bits(1, header->bitmap, start_byte_index, start_bit_index, qty);
-        } else if (choice == 2){
+        } else if (choice == 2) {
             if (!get_user_input("Enter the number of bits to clear: ", &qty) || 
                 !get_user_input("Enter in which byte start to clear: ", &start_byte_index) || 
                 !get_user_input("Enter the position of the bit to start clear: ", &start_bit_index)) {
                 continue;
             }
             set_or_clear_bits(0, header->bitmap, start_byte_index, start_bit_index, qty);
+        } else if (choice == 3) {
+            int nbytes;
+            if (!get_user_input("Enter the number of bytes to allocate: ", &nbytes)) {
+                continue;
+            }
+            void *allocated_ptr = my_malloc(nbytes);
+            if (allocated_ptr) {
+                printf("Allocated memory at address: %p\n", allocated_ptr);
+            } else {
+                printf("Failed to allocate memory.\n");
+            }
+        } else if (choice == 4) {
+            char address_str[20];
+            if (!get_user_input("Enter the address to free: ", address_str)) {
+                continue;
+            }
+            void *ptr_to_free = (void *)strtoull(address_str, NULL, 16);
+            my_free(ptr_to_free);
+            printf("Freed memory at address: %p\n", ptr_to_free);
         }
-        // Imprimimos el estado actual del mapa de bits después de cada operación de asignación
+        
         printf("Updated Bitmap: ");
         print_bitmap(header->bitmap, BITMAP_SIZE);
     }
+
     return 0;
 }
