@@ -7,7 +7,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g
 
 # Source files (.c files)
-CFILES = main.c
+CFILES = main.c my_malloc_manager.c 
 
 # Header files (.h files)
 HFILES = my_malloc_manager.h
@@ -16,7 +16,7 @@ HFILES = my_malloc_manager.h
 OBJFILES = $(CFILES:.c=.o)
 
 # Output executable name
-OUT = MicroOps
+OUT = YES
 
 # Main target
 $(OUT): $(OBJFILES)
