@@ -15,6 +15,9 @@
 void *my_malloc(size_t nbytes);
 void my_free(void *ptr);
 
+extern void *first_chunk;
+extern uint16_t chunk_current_id;
+
 typedef unsigned char *Bitmap;
 
 // Declaraciones de estructuras
@@ -47,5 +50,6 @@ int first_fit(unsigned char *bitmap, size_t bitmap_size, size_t units_needed);
 void print_bitmap(unsigned char *bitmap, size_t bitmap_size);
 void set_or_clear_bits(int set, Bitmap bitmap, uint16_t start_byte_index, uint16_t start_bit_index, uint16_t qty);
 void* create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChunkHeader *next);
-
+extern void *my_malloc(size_t nbytes);
+extern void my_free(void *ptr);
 #endif

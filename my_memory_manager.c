@@ -1,8 +1,7 @@
 #include "my_malloc_manager.h"
 
 // Declaración de variables globales
-extern void *first_chunk;
-extern uint16_t chunk_current_id;
+
 
 // Función para reservar memoria
 void *my_malloc(size_t nbytes) {

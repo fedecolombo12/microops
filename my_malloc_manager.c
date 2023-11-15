@@ -1,8 +1,5 @@
 #include "my_malloc_manager.h"
 
-// Declaraciones de variables globales
-extern void *first_chunk;
-extern uint16_t chunk_current_id;
 
 int first_fit(unsigned char *bitmap, size_t bitmap_size, size_t units_needed) {
     size_t consecutive_free_bits = 0;
