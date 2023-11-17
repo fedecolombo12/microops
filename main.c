@@ -1,5 +1,5 @@
 #include "my_malloc_manager.h"
-#include "my_memory_manager.c"
+
 
 // Función para obtener la entrada del usuario
 int get_user_input(char *prompt, int *input) {
@@ -48,27 +48,7 @@ int main() {
                 continue;
             }
             set_or_clear_bits(0, header->bitmap, start_byte_index, start_bit_index, qty);
-        } else if (choice == 3) {
-            int nbytes;
-            if (!get_user_input("Enter the number of bytes to allocate: ", &nbytes)) {
-                continue;
-            }
-            void *allocated_ptr = my_malloc(nbytes);
-            if (allocated_ptr) {
-                printf("Allocated memory at address: %p\n", allocated_ptr);
-            } else {
-                printf("Failed to allocate memory.\n");
-            }
-        } else if (choice == 4) {
-            char address_str[20];
-            if (!get_user_input("Enter the address to free: ", address_str)) {
-                continue;
-            }
-            void *ptr_to_free = (void *)strtoull(address_str, NULL, 16);
-            my_free(ptr_to_free);
-            printf("Freed memory at address: %p\n", ptr_to_free);
-        }
-        
+        } 
         printf("Updated Bitmap: ");
         print_bitmap(header->bitmap, BITMAP_SIZE);
     }
