@@ -8,7 +8,6 @@ void my_malloc_init(){
     // for (int i = 0; i < BITMAP_SIZE; i++){
     //     header->bitmap[i] = 0;
     // }
-    chunk_current_id = 0;
 }
 
 void *my_malloc(size_t nbytes){
@@ -62,4 +61,34 @@ void *my_malloc(size_t nbytes){
     allocation_header->bit_index = bit_index;
     
     return (char *) allocation_header + sizeof (AllocationHeader);
+}
+my_free(void *ptr){
+    // frees the memory space pointed to by ptr, which must have been returned by a previous call to my_malloc
+    // if ptr is NULL, no operation is performed
+    if (ptr == NULL) {
+        return;
+    }
+    AllocationHeader *allocation_header = (AllocationHeader *) ((char *) ptr - sizeof (AllocationHeader));
+    MemoryChunkHeader *chunk = (MemoryChunkHeader *) ((char *) allocation_header - allocation_header->bit_index * UNIT_SIZE);
+    if (chunk->is_large_allocation) {
+        printf("Freeing a large allocation. Chunk id %hd\n", chunk->id);
+        munmap(chunk->address, chunk->chunk_total_units * UNIT_SIZE);
+        return;
+    }
+    printf("Freeing a standard allocation. Chunk id %hd\n", chunk->id);
+    set_or_clear_bits(0, chunk->bitmap, allocation_header->bit_index / 8, allocation_header->bit_index % 8, allocation_header->nunits);
+    chunk->chunk_available_units += allocation_header->nunits;
+    if (chunk->chunk_available_units == UNITS_PER_CHUNK - STRUCT_UNITS - BITMAP_UNITS) {
+        printf("Freeing a chunk. Chunk id %hd\n", chunk->id);
+        if (chunk == first_chunk) {
+            first_chunk = chunk->next;
+        } else {
+            MemoryChunkHeader *prev_chunk = first_chunk;
+            while (prev_chunk->next != chunk) {
+                prev_chunk = prev_chunk->next;
+            }
+            prev_chunk->next = chunk->next;
+        }
+        munmap(chunk->address, chunk->chunk_total_units * UNIT_SIZE);
+    }
 }

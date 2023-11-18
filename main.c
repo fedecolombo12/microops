@@ -13,15 +13,12 @@ int get_user_input(char *prompt, int *input) {
 //inicialeza first_chunk
 MemoryChunkHeader *first_chunk = NULL;
 uint16_t chunk_current_id = 0;
+
 int main() {
     // Creamos e inicializamos el mapa de bits a cero
-    MemoryChunkHeader* header = (MemoryChunkHeader*) create_new_chunk(UNITS_PER_CHUNK, 0, NULL);
-    for (int i = 0; i < BITMAP_SIZE; i++) {
-        header->bitmap[i] = 0;
-    }
-
-    printf("Bitmap Size: %d bytes\n", BITMAP_SIZE);
-
+    char *ptr = NULL;
+    AllocationHeader *header;
+    MemoryChunkHeader *chunk;
     while (1) {
         int choice;
         if (!get_user_input("Enter your choice (1 to set, 2 to clear, 3 to allocate, 4 to free, or 0 to exit): ", &choice)) {
@@ -34,24 +31,44 @@ int main() {
         int start_byte_index;
         int start_bit_index;
         int qty;
-
+        
         if (choice == 1) {
-            if (!get_user_input("Enter the number of bits to set: ", &qty) || 
-                !get_user_input("Enter in which byte start to set: ", &start_byte_index) || 
-                !get_user_input("Enter the position of the bit to start set: ", &start_bit_index)) {
+            size_t nbytes;
+            if (!get_user_input("Enter the number of bytes to allocate: ", &nbytes)) {
                 continue;
             }
-            set_or_clear_bits(1, header->bitmap, start_byte_index, start_bit_index, qty);
+            ptr = my_malloc(nbytes);
+            if (ptr == NULL) {
+                printf("Allocation failed.\n");
+                continue;
+            }
+            header = (AllocationHeader *)(((char *)ptr) - sizeof(AllocationHeader));
+            chunk = (MemoryChunkHeader *)(((char *)header) - header->bit_index * UNIT_SIZE);
+            printf("Allocation successful. Address: %p\n", ptr);
+            printf("Chunk id: %hd\n", chunk->id);
+            printf("Chunk address: %p\n", chunk->address);
+            printf("Chunk is_large_allocation: %hd\n", chunk->is_large_allocation);
+            printf("Chunk chunk_total_units: %hd\n", chunk->chunk_total_units);
+            printf("Chunk chunk_available_units: %hd\n", chunk->chunk_available_units);
+            printf("Chunk bitmap: %p\n", chunk->bitmap);
+            printf("Chunk bitmap_size: %hd\n", chunk->bitmap_size);
+            printf("Chunk next: %p\n", chunk->next);
+            printf("Allocation nunits: %hd\n", header->nunits);
+            printf("Allocation bit_index: %hd\n", header->bit_index);
+            printf("Updated Bitmap: ");
+            print_bitmap(chunk->bitmap, chunk->bitmap_size);
+            
         } else if (choice == 2) {
-            if (!get_user_input("Enter the number of bits to clear: ", &qty) || 
-                !get_user_input("Enter in which byte start to clear: ", &start_byte_index) || 
-                !get_user_input("Enter the position of the bit to start clear: ", &start_bit_index)) {
-                continue;
-            }
-            set_or_clear_bits(0, header->bitmap, start_byte_index, start_bit_index, qty);
-        } 
-        printf("Updated Bitmap: ");
-        print_bitmap(header->bitmap, BITMAP_SIZE);
+            ptr;
+                printf("Ingrese un puntero xD : ");
+                scanf("%p", ptr);
+                my_free(ptr);
+
+            printf("Free successful.\n");
+        } else {
+            printf("Invalid choice.\n");
+            continue;
+        }
     }
 
     return 0;
