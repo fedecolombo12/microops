@@ -1,9 +1,9 @@
 #include "my_malloc_manager.h"
 
 // Implementación de la función create_new_chunk
-void *create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChunkHeader *next) {
+MemoryChunkHeader *create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChunkHeader *next) {
     // Calcula el total de unidades para mmap
-    MemoryChunkHeader *new_chunk = NULL;
+    MemoryChunkHeader *new_chunk;
     uint16_t total_units_to_mmap = is_large_allocation ? units_needed + STRUCT_UNITS : UNITS_PER_CHUNK; 
     uint16_t used_units = is_large_allocation ? STRUCT_UNITS : STRUCT_UNITS + BITMAP_UNITS;
     // Reserva memoria con mmap
@@ -25,9 +25,9 @@ void *create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChu
     new_chunk->next = next; 
     if(!is_large_allocation){
         // Inicializa el bitmap
-        for (u_int16_t i = 0; i < used_units; i++) {
-            u_int16_t byte_index = i / 8;
-            u_int16_t bit_index = i % 8;
+        for (uint16_t i = 0; i < used_units; i++) {
+            uint16_t byte_index = i / 8;
+            uint16_t bit_index = i % 8;
             new_chunk->bitmap[byte_index]  |= (1 << (7 - bit_index));
         }
     }

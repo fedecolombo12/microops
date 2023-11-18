@@ -1,6 +1,6 @@
 // Standard includes
 #include <errno.h>  // for errno
-//#include <error.h>  // for error handling of system calls: man 3 error
+#include <error.h>  // for error handling of system calls: man 3 error
 #include <stddef.h> // for size_t
 #include <stdio.h>  // for I/O functions
 #include <stdlib.h> // for EXIT_FAILURE
@@ -11,10 +11,9 @@
 #ifndef MY_MALLOC_MANAGER_H
 #define MY_MALLOC_MANAGER_H
 
-extern void *first_chunk;
-extern uint16_t chunk_current_id;
 
 typedef unsigned char *Bitmap;
+extern uint16_t chunk_current_id;
 
 // Declaraciones de estructuras
 typedef struct MemoryChunkHeader {
@@ -28,10 +27,17 @@ typedef struct MemoryChunkHeader {
     struct MemoryChunkHeader *next; // Pointer to the next MemoryChunkHeader, NULL if last one
 } MemoryChunkHeader;
 
+
+
 typedef struct AllocationHeader {
     uint16_t nunits;    // number of units
     uint16_t bit_index; // offset from the MemoryChunkHeader struct
 } AllocationHeader;
+
+extern void *my_malloc(size_t nbytes);
+extern MemoryChunkHeader *first_chunk;
+
+
 
 // Declaraciones de constantes
 #define BITMAP_SIZE 16 // in bytes
@@ -39,13 +45,15 @@ typedef struct AllocationHeader {
 #define UNITS_PER_CHUNK (BITMAP_SIZE * 8)
 #define STRUCT_UNITS (uint16_t)((sizeof(MemoryChunkHeader) + UNIT_SIZE - 1)/UNIT_SIZE)
 #define BITMAP_UNITS (uint16_t)((BITMAP_SIZE + UNIT_SIZE - 1)/UNIT_SIZE)
-#define IS_LARGE_ALLOCATION (units) (units >= (UNITS_PER_CHUNK - STRUCT_UNITS - BITMAP_UNITS))
+#define IS_LARGE_ALLOCATION(units_needed) (units_needed >= (UNITS_PER_CHUNK - STRUCT_UNITS - BITMAP_UNITS))
 #define MAX_MALLOC_SIZE (size_t)16 * 1024 * 1024 // 16 MB
 
 int first_fit(unsigned char *bitmap, size_t bitmap_size, size_t units_needed);
 void print_bitmap(unsigned char *bitmap, size_t bitmap_size);
 void set_or_clear_bits(int set, Bitmap bitmap, uint16_t start_byte_index, uint16_t start_bit_index, uint16_t qty);
-void* create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChunkHeader *next);
-extern void *my_malloc(size_t nbytes);
-extern void my_free(void *ptr);
+MemoryChunkHeader* create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChunkHeader *next);
+//extern void my_free(void *ptr);
+
+
+
 #endif

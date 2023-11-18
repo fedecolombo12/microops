@@ -10,6 +10,8 @@ int get_user_input(char *prompt, int *input) {
     }
     return 1;
 }
+//inicialeza first_chunk
+MemoryChunkHeader *first_chunk = NULL;
 
 int main() {
     // Creamos e inicializamos el mapa de bits a cero
