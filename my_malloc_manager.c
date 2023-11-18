@@ -62,7 +62,7 @@ void *my_malloc(size_t nbytes){
     
     return (char *) allocation_header + sizeof (AllocationHeader);
 }
-my_free(void *ptr){
+void my_free(void *ptr){
     // frees the memory space pointed to by ptr, which must have been returned by a previous call to my_malloc
     // if ptr is NULL, no operation is performed
     if (ptr == NULL) {
