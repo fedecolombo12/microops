@@ -15,7 +15,7 @@ HFILES = my_malloc_manager.h
 OBJFILES = $(CFILES:.c=.o)
 
 # Output executable name
-OUT = YES
+OUT = MO
 
 # Main target
 $(OUT): $(OBJFILES)

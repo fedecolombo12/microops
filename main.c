@@ -21,17 +21,13 @@ int main() {
     MemoryChunkHeader *chunk;
     while (1) {
         int choice;
-        if (!get_user_input("Enter your choice (1 to set, 2 to clear, 3 to allocate, 4 to free, or 0 to exit): ", &choice)) {
+        if (!get_user_input("Enter your choice (1 to set, 2 to clear, 0 to exit): ", &choice)) {
             continue;
         }
 
         if (choice == 0) {
             break;
-        }
-        int start_byte_index;
-        int start_bit_index;
-        int qty;
-        
+        }        
         if (choice == 1) {
             size_t nbytes;
             if (!get_user_input("Enter the number of bytes to allocate: ", &nbytes)) {
@@ -63,13 +59,12 @@ int main() {
                 printf("Ingrese un puntero xD : ");
                 scanf("%p", ptr);
                 my_free(ptr);
-
+                // print_bitmap(chunk->bitmap, chunk->bitmap_size);
             printf("Free successful.\n");
         } else {
             printf("Invalid choice.\n");
             continue;
         }
     }
-
     return 0;
 }
