@@ -59,7 +59,9 @@ int main() {
                 printf("Ingrese un puntero xD : ");
                 scanf("%p", ptr);
                 my_free(ptr);
-                // print_bitmap(chunk->bitmap, chunk->bitmap_size);
+                // print of the bitmap after the free
+                printf("Updated Bitmap: ");
+                print_bitmap(chunk->bitmap, chunk->bitmap_size);
             printf("Free successful.\n");
         } else {
             printf("Invalid choice.\n");
