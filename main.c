@@ -12,7 +12,7 @@ int get_user_input(char *prompt, int *input) {
 }
 //inicialeza first_chunk
 MemoryChunkHeader *first_chunk = NULL;
-
+uint16_t chunk_current_id = 0;
 int main() {
     // Creamos e inicializamos el mapa de bits a cero
     MemoryChunkHeader* header = (MemoryChunkHeader*) create_new_chunk(UNITS_PER_CHUNK, 0, NULL);
