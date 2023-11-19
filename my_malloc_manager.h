@@ -1,4 +1,6 @@
-// Standard includes
+/* Contiene las definiciones de estructuras de datos, constantes y declaraciones de funciones utilizadas 
+en el sistema de asignación de memoria. */
+
 #include <errno.h>  // for errno
 // #include <error.h>  // for error handling of system calls: man 3 error
 #include <stddef.h> // for size_t
@@ -27,8 +29,6 @@ typedef struct MemoryChunkHeader {
     struct MemoryChunkHeader *next; // Pointer to the next MemoryChunkHeader, NULL if last one
 } MemoryChunkHeader;
 
-
-
 typedef struct AllocationHeader {
     uint16_t nunits;    // number of units
     uint16_t bit_index; // offset from the MemoryChunkHeader struct
@@ -36,8 +36,6 @@ typedef struct AllocationHeader {
 
 extern void *my_malloc(size_t nbytes);
 extern MemoryChunkHeader *first_chunk;
-
-
 
 // Declaraciones de constantes
 #define BITMAP_SIZE 16 // in bytes
@@ -54,6 +52,5 @@ void set_or_clear_bits(int set, Bitmap bitmap, uint16_t start_byte_index, uint16
 MemoryChunkHeader* create_new_chunk(uint16_t units_needed, int is_large_allocation, MemoryChunkHeader *next);
 extern void my_free(void *ptr);
 
-
-
 #endif
+

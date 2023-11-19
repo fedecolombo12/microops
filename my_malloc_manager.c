@@ -1,55 +1,49 @@
 #include "my_malloc_manager.h"
 
+/* Inicializa admin de memoria. Crea el primer bloque (first_chunk) 
+llamando a create_new_chunk con el tamaño especificado (UNITS_PER_CHUNK). */
+
 void my_malloc_init(){
-    // initialize the memory manager
-    // create the first chunk
-    // MemoryChunkHeader *first_chunk = (MemoryChunkHeader*) create_new_chunk(UNITS_PER_CHUNK, 0, NULL);
     first_chunk = create_new_chunk(UNITS_PER_CHUNK, 0, NULL);
-    // for (int i = 0; i < BITMAP_SIZE; i++){
-    //     header->bitmap[i] = 0;
-    // }
 }
 
+/* Utiliza para asignar memoria dinámica. 
+Calcula la cantidad de unidades necesarias para satisfacer la solicitud, busca en los bloques existentes 
+o crea nuevos bloques según sea necesario, y marca la memoria asignada. */
+
 void *my_malloc(size_t nbytes){
-    // allocates nbytes bytes and returns a pointer to the allocated memory
-    // Calculate the number of units needed
-    // Always add the size in units of the allocated memory at the beginning, using sizeof (AllocationHeader) bytes for it
     uint16_t units_needed = (nbytes + sizeof(AllocationHeader) + UNIT_SIZE - 1) / UNIT_SIZE;
     MemoryChunkHeader *chunk = NULL;
     int bit_index;
-    int is_large_allocation = IS_LARGE_ALLOCATION(units_needed);
-    if (first_chunk == NULL) {
-        my_malloc_init(); // \nitialize the memory manager
+    int is_large_allocation = IS_LARGE_ALLOCATION(units_needed); // indica si la asignación es grande.
+    if (first_chunk == NULL) { //Se verifica si el primer bloque ya existe; si no, se inicializa el administrador de memoria.
+        my_malloc_init(); 
     }
-    // large allocation, create a new chunk
-    if (is_large_allocation) {
+    if (is_large_allocation) { // Dependiendo de si es una asignación grande o estándar, se toman diferentes caminos.
         printf("\n New chunk for large allocation will be created. We need %hd units.\n", units_needed);
-        chunk = first_chunk->next = create_new_chunk(units_needed, 1, first_chunk->next); // 1 means TRUE is_large_allocation
+        chunk = first_chunk->next = create_new_chunk(units_needed, 1, first_chunk->next); 
         bit_index = STRUCT_UNITS;
-    } else {// standard allocation, we might well find a hole in existing chunks
+    } else {
         for (chunk = first_chunk; chunk != NULL; chunk = chunk->next) {
-            // Attempt to find the first fit in the bitmap
             printf("Units needed %hd. \n", units_needed);
             printf("Will look in chunk id %hd. \n", chunk->id);
-            
-            if (units_needed > chunk->chunk_available_units) {// if the chunk is for large allocation it will have 0 available units too
+            if (units_needed > chunk->chunk_available_units) {
                 printf("Not enough space in chunk id %hd that has %hd available units\n", chunk->id, chunk->chunk_available_units);
-                continue; // go to next chunk
+                continue; 
             }
             bit_index = first_fit(chunk->bitmap, chunk->bitmap_size, units_needed);
             if (bit_index == -1) {
                 printf("Not enough space for first fit in chunk id %hd\n", chunk->id);
-            } else {// found!
+            } else {
                 break;
             }
         }
-        if (chunk == NULL) {// have to create a new standard chunk, and will insert it right after the first chunk
+        if (chunk == NULL) {
             printf("\nNew chunk for standard allocation will be created. We need %hd units. \n", units_needed);
-            chunk = first_chunk->next = create_new_chunk (units_needed, 0, first_chunk->next); // 0 means FALSE is_large_allocation
+            chunk = first_chunk->next = create_new_chunk (units_needed, 0, first_chunk->next); 
             bit_index = first_fit(chunk->bitmap, chunk->bitmap_size, units_needed);
-            if (bit_index == -1) { // should never happen
+            if (bit_index == -1) {
                 printf("Not enough space for first fit in chunk id %hd\n", chunk->id);
-                // error (EXIT_FAILURE, 0, "bit index return -1 on new chunk, programming error. Exiting.");
             }
         }
         printf("\nFound a hole in chunk id %hd at bit index %d\n", chunk->id, bit_index);
@@ -62,9 +56,12 @@ void *my_malloc(size_t nbytes){
     
     return (char *) allocation_header + sizeof (AllocationHeader);
 }
+
+/* Libera la memoria previamente asignada por my_malloc. 
+Recupera información del encabezado de asignación y, dependiendo de si es una asignación estándar o grande, 
+ajusta el bitmap o libera completamente el bloque utilizando munmap si es una asignación grande. */
+
 void my_free(void *ptr){
-    // frees the memory space pointed to by ptr, which must have been returned by a previous call to my_malloc
-    // if ptr is NULL, no operation is performed
     if (ptr == NULL) {
         return;
     }
