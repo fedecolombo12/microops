@@ -11,8 +11,8 @@ int first_fit(unsigned char *bitmap, size_t bitmap_size, size_t units_needed) {
         size_t byte = i / 8; // Se calcula byte y bit para acceder a los bits del bitmap.
         size_t bit = i % 8;
         if (!(bitmap[byte] & (1 << (7-bit)))) { // verifica si el bit actual es libre
-            // Se actualizan las variables y, 
-            // si se encuentra suficiente espacio, se marcan los bits como ocupados y se devuelve la posición del primer bit libre.
+            // Se actualizan las variables y, si se encuentra suficiente espacio, 
+            // se marcan los bits como ocupados y se devuelve la posición del primer bit libre.
             if (consecutive_free_bits == 0) { 
                 first_free_bit_index = i;
             }

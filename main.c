@@ -5,7 +5,7 @@
 int get_user_input(char *prompt, int *input) {
     printf("%s", prompt);
     if(scanf("%d", input) != 1) {
-        printf("Valor inválido. Por faovr ingresar un valor correcto.\n");
+        printf("Valor inválido. Por favor ingresar un valor correcto.\n");
         return 0;
     }
     return 1;
@@ -15,8 +15,7 @@ MemoryChunkHeader *first_chunk = NULL;
 uint16_t chunk_current_id = 0;
 
 int main() {
-    // Creamos e inicializamos el mapa de bits a cero
-    char *ptr = NULL;
+    char *ptr = NULL; // Creamos e inicializamos el mapa de bits a cero
     AllocationHeader *header;
     MemoryChunkHeader *chunk;
     while (1) {
@@ -24,7 +23,6 @@ int main() {
         if (!get_user_input("Elegir la opción (1 para set, 2 para clear, 0 para salir): ", &choice)) {
             continue;
         }
-
         if (choice == 0) {
             break;
         }        
@@ -53,13 +51,11 @@ int main() {
             printf("Allocation bit_index: %hd\n", header->bit_index);
             printf("Bitmap: ");
             print_bitmap(chunk->bitmap, chunk->bitmap_size);
-            
         } else if (choice == 2) {
             ptr;
                 printf("Ingrese un puntero: ");
                 scanf("%p", ptr);
                 my_free(ptr);
-                // print of the bitmap after the free
                 printf("Bitmap: ");
                 print_bitmap(chunk->bitmap, chunk->bitmap_size);
             printf("Liberado exitoso.\n");
