@@ -73,17 +73,16 @@ void my_free(void *ptr){
     MemoryChunkHeader *chunk = (MemoryChunkHeader *) ((char *) allocation_header - allocation_header->bit_index * UNIT_SIZE);
     // Si la asignación es de un bloque grande
     if (chunk->is_large_allocation) { // Se indica que se está liberando una asignación grande y se utiliza munmap para liberar completamente el bloque de memoria.
-        printf("Freeing a large allocation. Chunk id %hd\n", chunk->id);
+        printf("Libera asignación grande. Chunk id %hd\n", chunk->id);
         munmap(chunk->address, chunk->chunk_total_units * UNIT_SIZE);
         return;
     }
-    // Se imprime un mensaje indicando que se está liberando una asignación estándar.
-    printf("Freeing a standard allocation. Chunk id %hd\n", chunk->id);
-    // Borra los bits correspondientes al bloque liberado en el bitmap del bloque.
+    printf("Libera asignación estándar. Chunk id %hd\n", chunk->id);
+    // Borra bits correspondientes al bloque liberado en el bitmap del bloque.
     set_or_clear_bits(0, chunk->bitmap, allocation_header->bit_index / 8, allocation_header->bit_index % 8, allocation_header->nunits);
-    chunk->chunk_available_units += allocation_header->nunits; // Se incrementa la cantidad de unidades disponibles en el bloque.
+    chunk->chunk_available_units += allocation_header->nunits; // Incrementa la #unidades disponibles en el bloque.
     if (chunk->chunk_available_units == UNITS_PER_CHUNK - STRUCT_UNITS - BITMAP_UNITS) { // Se verifica si todo el bloque está ahora disponible para su liberación:
-        printf("Freeing a chunk. Chunk id %hd\n", chunk->id);
+        printf("Libera chunk. Chunk id %hd\n", chunk->id);
         if (chunk == first_chunk) {
             first_chunk = chunk->next;
         } else { // Se ajustan los enlaces en la lista de bloques (first_chunk y next) para excluir el bloque liberado.

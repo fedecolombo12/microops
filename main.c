@@ -5,7 +5,7 @@
 int get_user_input(char *prompt, int *input) {
     printf("%s", prompt);
     if(scanf("%d", input) != 1) {
-        printf("Invalid input.\n");
+        printf("Valor inválido. Por faovr ingresar un valor correcto.\n");
         return 0;
     }
     return 1;
@@ -21,7 +21,7 @@ int main() {
     MemoryChunkHeader *chunk;
     while (1) {
         int choice;
-        if (!get_user_input("Enter your choice (1 to set, 2 to clear, 0 to exit): ", &choice)) {
+        if (!get_user_input("Elegir la opción (1 para set, 2 para clear, 0 para salir): ", &choice)) {
             continue;
         }
 
@@ -30,12 +30,12 @@ int main() {
         }        
         if (choice == 1) {
             size_t nbytes;
-            if (!get_user_input("Enter the number of bytes to allocate: ", &nbytes)) {
+            if (!get_user_input("Ingresar número de bytes que se dese alocar: ", &nbytes)) {
                 continue;
             }
             ptr = my_malloc(nbytes);
             if (ptr == NULL) {
-                printf("Allocation failed.\n");
+                printf("Error en la alocación.\n");
                 continue;
             }
             header = (AllocationHeader *)(((char *)ptr) - sizeof(AllocationHeader));
@@ -62,9 +62,9 @@ int main() {
                 // print of the bitmap after the free
                 printf("Bitmap: ");
                 print_bitmap(chunk->bitmap, chunk->bitmap_size);
-            printf("Free successful.\n");
+            printf("Liberado exitoso.\n");
         } else {
-            printf("Invalid choice.\n");
+            printf("Elección inválida.\n");
             continue;
         }
     }
