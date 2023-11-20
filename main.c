@@ -51,16 +51,16 @@ int main() {
             printf("Chunk next: %p\n", chunk->next);
             printf("Allocation nunits: %hd\n", header->nunits);
             printf("Allocation bit_index: %hd\n", header->bit_index);
-            printf("Updated Bitmap: ");
+            printf("Bitmap: ");
             print_bitmap(chunk->bitmap, chunk->bitmap_size);
             
         } else if (choice == 2) {
             ptr;
-                printf("Ingrese un puntero xD : ");
+                printf("Ingrese un puntero: ");
                 scanf("%p", ptr);
                 my_free(ptr);
                 // print of the bitmap after the free
-                printf("Updated Bitmap: ");
+                printf("Bitmap: ");
                 print_bitmap(chunk->bitmap, chunk->bitmap_size);
             printf("Free successful.\n");
         } else {
