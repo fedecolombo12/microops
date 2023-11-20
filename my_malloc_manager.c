@@ -20,33 +20,33 @@ void *my_malloc(size_t nbytes){
         my_malloc_init(); 
     }
     if (is_large_allocation) { // Dependiendo de si es una asignación grande o estándar, se toman diferentes caminos.
-        printf("\n New chunk for large allocation will be created. We need %hd units.\n", units_needed);
+        printf("\n Nuevo chunk para large allocation sera creado. Necesitamos %hd unidades.\n", units_needed);
         chunk = first_chunk->next = create_new_chunk(units_needed, 1, first_chunk->next); 
         bit_index = STRUCT_UNITS;
     } else {
         for (chunk = first_chunk; chunk != NULL; chunk = chunk->next) {
-            printf("Units needed %hd. \n", units_needed);
-            printf("Will look in chunk id %hd. \n", chunk->id);
+            printf("Unidades necesitadas %hd. \n", units_needed);
+            printf("Revisaremos en el chunk id %hd. \n", chunk->id);
             if (units_needed > chunk->chunk_available_units) {
-                printf("Not enough space in chunk id %hd that has %hd available units\n", chunk->id, chunk->chunk_available_units);
+                printf("No hay suficiente espacio en el chunk ID %hd que tiene %hd unidades disponibles\n", chunk->id, chunk->chunk_available_units);
                 continue; 
             }
             bit_index = first_fit(chunk->bitmap, chunk->bitmap_size, units_needed);
             if (bit_index == -1) {
-                printf("Not enough space for first fit in chunk id %hd\n", chunk->id);
+                printf("No hay suficiente espacio para el first fit en el chunk ID %hd\n", chunk->id);
             } else {
                 break;
             }
         }
         if (chunk == NULL) {
-            printf("\nNew chunk for standard allocation will be created. We need %hd units. \n", units_needed);
+            printf("\nNuevo chunk para un standar allocation sera creado. Necesitamos %hd unidades. \n", units_needed);
             chunk = first_chunk->next = create_new_chunk (units_needed, 0, first_chunk->next); 
             bit_index = first_fit(chunk->bitmap, chunk->bitmap_size, units_needed);
             if (bit_index == -1) {
-                printf("Not enough space for first fit in chunk id %hd\n", chunk->id);
+                printf("No hay suficiente espacio para el first fit en el chunk ID %hd\n", chunk->id);
             }
         }
-        printf("\nFound a hole in chunk id %hd at bit index %d\n", chunk->id, bit_index);
+        printf("\nEncontramos espacio suficiente en el chunk ID %hd en el bit index %d\n", chunk->id, bit_index);
     }
     chunk->chunk_available_units -= units_needed;
     size_t offset = bit_index * UNIT_SIZE;
