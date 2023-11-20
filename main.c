@@ -52,9 +52,8 @@ int main() {
             printf("Bitmap: ");
             print_bitmap(chunk->bitmap, chunk->bitmap_size);
         } else if (choice == 2) {
-            ptr;
                 printf("Ingrese un puntero: ");
-                scanf("%p", ptr);
+                scanf("%p", &ptr);
                 my_free(ptr);
                 printf("Bitmap: ");
                 print_bitmap(chunk->bitmap, chunk->bitmap_size);

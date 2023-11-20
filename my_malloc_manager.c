@@ -40,7 +40,7 @@ void *my_malloc(size_t nbytes){
         }
         if (chunk == NULL) {
             printf("\nNuevo chunk para un standar allocation sera creado. Necesitamos %hd unidades. \n", units_needed);
-            chunk = first_chunk->next = create_new_chunk (units_needed, 0, first_chunk->next); 
+            chunk = first_chunk->next = create_new_chunk(units_needed, 0, first_chunk->next); 
             bit_index = first_fit(chunk->bitmap, chunk->bitmap_size, units_needed);
             if (bit_index == -1) {
                 printf("No hay suficiente espacio para el first fit en el chunk ID %hd\n", chunk->id);
@@ -80,6 +80,7 @@ void my_free(void *ptr){
     printf("Libera asignación estándar. Chunk id %hd\n", chunk->id);
     // Borra bits correspondientes al bloque liberado en el bitmap del bloque.
     set_or_clear_bits(0, chunk->bitmap, allocation_header->bit_index / 8, allocation_header->bit_index % 8, allocation_header->nunits);
+    printf("Bitmap: %p, byte_index: %u, bit_index: %u, camtodad: %u \n", chunk->bitmap, allocation_header->bit_index / 8, allocation_header->bit_index % 8, allocation_header->nunits);
     chunk->chunk_available_units += allocation_header->nunits; // Incrementa la #unidades disponibles en el bloque.
     if (chunk->chunk_available_units == UNITS_PER_CHUNK - STRUCT_UNITS - BITMAP_UNITS) { // Se verifica si todo el bloque está ahora disponible para su liberación:
         printf("Libera chunk. Chunk id %hd\n", chunk->id);

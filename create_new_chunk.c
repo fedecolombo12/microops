@@ -18,14 +18,14 @@ MemoryChunkHeader *create_new_chunk(uint16_t units_needed, int is_large_allocati
     }
     new_chunk = (MemoryChunkHeader *)mem; // Inicializa el header del chunk
     new_chunk->address = mem;
-    new_chunk->id = 0;
+    new_chunk->id = chunk_current_id++;
     // Si es una asignación grande, el bitmap se establece en NULL; 
     // de lo contrario, se calcula su posición en la memoria asignada y se inicializa.
     new_chunk->is_large_allocation = is_large_allocation;
     new_chunk->chunk_total_units = total_units_to_mmap;
     new_chunk->chunk_available_units = total_units_to_mmap - used_units;
     new_chunk->bitmap = is_large_allocation ? NULL: (unsigned char *)mem + STRUCT_UNITS * UNIT_SIZE; // Establece en NULL por ahora
-    new_chunk->bitmap_size = is_large_allocation ? 8 : BITMAP_SIZE; // Establece en 0 por ahora
+    new_chunk->bitmap_size = is_large_allocation ? 0 : BITMAP_SIZE; // Establece en 0 por ahora
     new_chunk->next = next; 
     if(!is_large_allocation){ // Inicializa el bitmap
         for (uint16_t i = 0; i < used_units; i++) {
